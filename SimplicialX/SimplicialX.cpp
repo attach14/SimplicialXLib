@@ -71,18 +71,8 @@ public:
 	void link(vector<int>& word) {
 		complex->link(word);
 	}
+	vec bettiNumbers() {
+		return complex->bettiNumbers();
+	}
 	SimpInterface* complex;
 };
-
-int main() {
-	ios_base::sync_with_stdio(0); cout.tie(0); cin.tie(0);
-#ifdef _DEBUG 
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
-#endif
-	SimplicialComplex com(false);
-	vector<int> word;
-	word = { 1,2,3 };
-	com.insert(word, 90);
-	com.allSimplices();
-}
