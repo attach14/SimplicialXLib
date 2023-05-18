@@ -36,40 +36,112 @@ public:
 		complex->allSimplices();
 	}
 	void vertexDegreePQ(int p, int q) {
-		complex->vertexDegreePQ(p, q);
+		try {
+			complex->vertexDegreePQ(p, q);
+		}
+		catch (const std::exception & e) {
+			std::cerr << e.what() << std::endl;
+			throw;
+		}
 	}
 	void closeness(int p, int q){
-		complex->closeness(p, q);
+		try {
+			complex->closeness(p, q);
+		}
+		catch (const std::exception & e) {
+			std::cerr << e.what() << std::endl;
+			throw;
+		}
 	}
 	void betweenness(int p, int q) {
-		complex->betweenness(p, q);
+		try {
+			complex->betweenness(p, q);
+		}
+		catch (const std::exception & e) {
+			std::cerr << e.what() << std::endl;
+			throw;
+		}
 	}
 	double clusterCoeff(int p, int q) {
-		return complex->clusterCoeff(p, q);
+		try {
+			return complex->clusterCoeff(p, q);
+		}
+		catch (const std::exception & e) {
+			std::cerr << e.what() << std::endl;
+			throw;
+		}
 	}
 	double distancePQ(vector<int>& a, vector<int>& b, int p, int q) {
-		return complex->distansePQ(a, b, p, q);
+		try {
+			return complex->distansePQ(a, b, p, q);
+		}
+		catch (const std::exception & e) {
+			std::cerr << e.what() << std::endl;
+			throw;
+		}
 	}
 	mat boundaryMatrix(int k = 1, int p = 1) {
-		return complex->boundaryMatrix(k, p);
+		try {
+			return complex->boundaryMatrix(k, p);
+		}
+		catch (const std::exception & e) {
+			std::cerr << e.what() << std::endl;
+			throw;
+		}
 	}
 	mat laplacianMatrix(int k, int p = 1, int q = 1) {
-		return laplacianMatrix(k, p, q);
+		try {
+			return complex->laplacianMatrix(k, p, q);
+		}
+		catch (const std::exception & e) {
+			std::cerr << e.what() << std::endl;
+			throw;
+		}
 	}
 	mat laplacianMatrixWeight(int k, int p = 1, int q = 1) {
-		return laplacianMatrixWeight(k, p, q);
+		try {
+			return complex->laplacianMatrixWeight(k, p, q);
+		}
+		catch (const std::exception & e) {
+			std::cerr << e.what() << std::endl;
+			throw;
+		}
 	}
 	pair <vec, mat> laplacianSpectre(int k, int p = 1, int q = 1, bool weight = false) {
-		return complex->laplacianSpectre(k, p, q, weight);
+		try {
+			return complex->laplacianSpectre(k, p, q, weight);
+		}
+		catch (const std::exception & e) {
+			std::cerr << e.what() << std::endl;
+			throw;
+		}
 	}
 	void openStar(vector<int>& word) {
-	    complex->openStar(word);
+		try {
+			complex->openStar(word);
+		}
+		catch (const std::exception & e) {
+			std::cerr << e.what() << std::endl;
+			throw;
+		}
 	}
 	void closeStar(vector<int>& word) {
-		complex->closeStar(word);
+		try {
+			complex->closeStar(word);
+		}
+		catch (const std::exception & e) {
+			std::cerr << e.what() << std::endl;
+			throw;
+		}
 	}
 	void link(vector<int>& word) {
-		complex->link(word);
+		try {
+			complex->link(word);
+		}
+		catch (const std::exception & e) {
+			std::cerr << e.what() << std::endl;
+			throw;
+		}
 	}
 	vec bettiNumbers() {
 		return complex->bettiNumbers();
