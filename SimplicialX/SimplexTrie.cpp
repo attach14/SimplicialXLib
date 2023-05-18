@@ -11,7 +11,7 @@
 #include "SimplexInterface.h"
 using namespace std;
 using namespace arma;
-const int TrieMx = 100;
+const int TrieMx = 30;
 const int TrieINF = 10000000;
 
 class SimplexTrie : public SimpInterface
@@ -70,8 +70,6 @@ public:
 		delete v;
 	}
 
-
-
 	bool goodPath(TrieNode* v, vector<int>& word, int pos) {
 		if (v->value == word[pos]) {
 			pos--;
@@ -127,6 +125,10 @@ public:
 	void openStar(vector<int>& task) {
 		vector<int> word = task;
 		makePretty(word);
+		TrieNode* v = simplexFinder(word);
+		if (v == nullptr) {
+			throw std::runtime_error("This simplex doesn't exist\n");
+		}
 		vector<TrieNode*> ans;
 		bfsFinder(root, word, ans);
 		for (auto c : ans) {
@@ -152,6 +154,10 @@ public:
 		vector<int> word = task;
 		makePretty(word);
 		int n = word.size();
+		TrieNode* v = simplexFinder(word);
+		if (v == nullptr) {
+			throw std::runtime_error("This simplex doesn't exist\n");
+		}
 		int last = word[n - 1];
 		set<int> kids;
 		for (int i = n - 1; i < TrieMx; i++) {
@@ -193,6 +199,10 @@ public:
 	void link(vector<int>& task) {
 		vector<int> word = task;
 		makePretty(word);
+		TrieNode* v = simplexFinder(word);
+		if (v == nullptr) {
+			throw std::runtime_error("This simplex doesn't exist\n");
+		}
 		vector<TrieNode*> op;
 		bfsFinder(root, word, op);
 		int n = word.size();
@@ -588,16 +598,24 @@ public:
 	}
 
 	double distansePQ(vector<int>& taskFirst, vector<int>& taskSecond, int p, int q) {
-		if (p == q) {
-			cout << "Error: p and q are equal\n";
+		if (p < 0 || q < 0) {
+			throw std::runtime_error("p and q can't be negative\n");
 			return -1;
 		}
-		if (p < 0 || q < 0) {
-			cout << "Error: p and q can't be negative\n";
+		if (p == q) {
+			throw std::runtime_error("p and q can't be equal\n");
+			return -1;
+		}
+		if (f[p] == 0) {
+			throw std::runtime_error("There are no p-simplices\n");
+			return -1;
+		}
+		if (f[q] == 0) {
+			throw std::runtime_error("There are no q-simplices\n");
 			return -1;
 		}
 		if (taskFirst.size() != p + 1 || taskSecond.size() != p + 1) {
-			cout << "Simplexes' dimensions must be p\n";
+			throw std::runtime_error("Simplices' dimensions must be p\n");
 			return -1;
 		}
 		vector<int> wordFirst = taskFirst;
@@ -607,11 +625,11 @@ public:
 		TrieNode* v = simplexFinder(wordFirst);
 		TrieNode* u = simplexFinder(wordSecond);
 		if (v == nullptr) {
-			cout << "Error: first simplex doesn't exist\n";
+			throw std::runtime_error("Error: first simplex doesn't exist\n");
 			return -1;
 		}
 		if (u == nullptr) {
-			cout << "Error: second simplex doesn't exist\n";
+			throw std::runtime_error("Error: second simplex doesn't exist\n");
 			return -1;
 		}
 		if (v == u) {
@@ -624,6 +642,22 @@ public:
 	}
 
 	void vertexDegreePQ(int p, int q) {
+		if (p < 0 || q < 0) {
+			throw std::runtime_error("p and q can't be negative\n");
+			return;
+		}
+		if (p == q) {
+			throw std::runtime_error("p and q can't be equal\n");
+			return;
+		}
+		if (f[p] == 0) {
+			throw std::runtime_error("There are no p-simplices\n");
+			return;
+		}
+		if (f[q] == 0) {
+			throw std::runtime_error("There are no q-simplices\n");
+			return;
+		}
 		vector<vector<pair<int, double>>> graph = graphPQBuilder(p, q);
 		vector<int> rev(graph.size());
 		for (int i = 0; i < translation.size(); i++) {
@@ -648,12 +682,20 @@ public:
 	}
 
 	void closeness(int p, int q) {
-		if (p == q) {
-			cout << "Error: p and q are equal\n";
+		if (p < 0 || q < 0) {
+			throw std::runtime_error("p and q can't be negative\n");
 			return;
 		}
-		if (p < 0 || q < 0) {
-			cout << "Error: p and q can't be negative\n";
+		if (p == q) {
+			throw std::runtime_error("p and q can't be equal\n");
+			return;
+		}
+		if (f[p] == 0) {
+			throw std::runtime_error("There are no p-simplices\n");
+			return;
+		}
+		if (f[q] == 0) {
+			throw std::runtime_error("There are no q-simplices\n");
 			return;
 		}
 		std::chrono::time_point<std::chrono::high_resolution_clock> start, finish;
@@ -661,7 +703,7 @@ public:
 		vector<double> cent(graph.size());
 		double ans = graph.size();
 		size_t n = graph.size();
-#pragma omp parallel for 
+		#pragma omp parallel for 
 		for (int i = 0; i < n; i++) {
 			vector<pair<double, int>> dist = dijkstra(i, graph);
 			double sum = 0;
@@ -699,16 +741,25 @@ public:
 	}
 
 	void betweenness(int p, int q) {
-		if (p == q) {
-			cout << "Error: p and q are equal\n";
+		if (p < 0 || q < 0) {
+			throw std::runtime_error("p and q can't be negative\n");
 			return;
 		}
-		if (p < 0 || q < 0) {
-			cout << "Error: p and q can't be negative\n";
+		if (p == q) {
+			throw std::runtime_error("p and q can't be equal\n");
+			return;
+		}
+		if (f[p] == 0) {
+			throw std::runtime_error("There are no p-simplices\n");
+			return;
+		}
+		if (f[q] == 0) {
+			throw std::runtime_error("There are no q-simplices\n");
 			return;
 		}
 		vector<vector<pair<int, double>>> graph = graphPQBuilder(p, q);
 		vector<double> cent(graph.size());
+		#pragma omp parallel for 
 		for (int i = 0; i < graph.size(); i++) {
 			int cur = i;
 			vector<pair<double, int>> path = dijkstra(cur, graph);
@@ -763,6 +814,22 @@ public:
 	}
 
 	double clusterCoeff(int p, int q) {
+		if (p < 0 || q < 0) {
+			throw std::runtime_error("p and q can't be negative\n");
+			return -1;
+		}
+		if (p == q) {
+			throw std::runtime_error("p and q can't be equal\n");
+			return -1;
+		}
+		if (f[p] == 0) {
+			throw std::runtime_error("There are no p-simplices\n");
+			return -1;
+		}
+		if (f[q] == 0) {
+			throw std::runtime_error("There are no q-simplices\n");
+			return -1;
+		}
 		vector<vector<pair<int, double>>> graph = graphPQBuilder(p, q);
 		double ans = 0;
 		double znam = 0;
@@ -888,41 +955,37 @@ public:
 
 	mat boundaryMatrix(int k = 1, int p = 1) {
 		double orient = 1;
+		mat bd(1, 1, fill::zeros);
 		if (k < 1) {
-			//ошибка
-			mat A(1, 1, fill::zeros);
-			return A;
+			throw std::runtime_error("k must be greater than 0\n");
+			return bd;
 		}
 		if (p < 1) {
-			//ошибка
-			mat A(1, 1, fill::zeros);
-			return A;
+			throw std::runtime_error("p must be greater than 0\n");
+			return bd;
 		}
 		if (k - p < 0) {
-			//ошибка
-			mat A(1, 1, fill::zeros);
-			return A;
-		}
-		if (orient > 1 || orient < -1) {
-			//ошибка
-			mat A(1, 1, fill::zeros);
-			return A;
+			throw std::runtime_error("k can't be less than p\n");
+			return bd;
 		}
 		if (k >= TrieMx || f[k] == 0) {
-			//ошибка
-			mat A(1, 1, fill::zeros);
-			return A;
+			throw std::runtime_error("There aro no k-simplices\n");
+			return bd;
+		}
+		if (f[k - p] == 0) {
+			throw std::runtime_error("There aro no (k-p)-simplices\n");
+			return bd;
 		}
 		vector<TrieNode*> k_simp, prev_simp;
 		dimensionFinderNodes(root, k, k_simp);
 		dimensionFinderNodes(root, k - p, prev_simp);
 		if (k_simp.size() == 0) {
-			//ошибка
+			//РѕС€РёР±РєР°
 			mat A(1, 1, fill::zeros);
 			return A;
 		}
 		if (prev_simp.size() == 0) {
-			//ошибка
+			//РѕС€РёР±РєР°
 			mat A(1, 1, fill::zeros);
 			return A;
 		}
